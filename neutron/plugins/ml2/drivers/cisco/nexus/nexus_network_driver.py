@@ -159,11 +159,13 @@ class CiscoNexusDriver(object):
         """Enable a VLAN on a trunk interface."""
         # If more than one VLAN is configured on this interface then
         # include the 'add' keyword.
-        if len(nexus_db_v2.get_port_switch_bindings(
-                '%s:%s' % (intf_type, interface), nexus_host)) == 1:
-            snippet = snipp.CMD_INT_VLAN_SNIPPET
-        else:
-            snippet = snipp.CMD_INT_VLAN_ADD_SNIPPET
+        # if len(nexus_db_v2.get_port_switch_bindings(
+        #        '%s:%s' % (intf_type, interface), nexus_host)) == 1:
+        #     snippet = snipp.CMD_INT_VLAN_SNIPPET
+        # else:
+        #     snippet = snipp.CMD_INT_VLAN_ADD_SNIPPET
+        # Temporarily disable the add command.
+        snippet = snipp.CMD_INT_VLAN_ADD_SNIPPET
         confstr = snippet % (intf_type, interface, vlanid, intf_type)
         confstr = self.create_xml_snippet(confstr)
         LOG.debug(_("NexusDriver: %s"), confstr)
