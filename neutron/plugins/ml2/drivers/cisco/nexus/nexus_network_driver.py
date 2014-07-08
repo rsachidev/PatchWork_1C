@@ -26,6 +26,7 @@ from neutron.plugins.ml2.drivers.cisco.nexus import credentials_v2 as cred
 from neutron.plugins.ml2.drivers.cisco.nexus import exceptions as cexc
 from neutron.plugins.ml2.drivers.cisco.nexus import nexus_db_v2
 from neutron.plugins.ml2.drivers.cisco.nexus import nexus_snippets as snipp
+from neutron.plugins.ml2.drivers.cisco.nexus import mech_nexus_cisco as mech
 
 LOG = logging.getLogger(__name__)
 
@@ -150,10 +151,15 @@ class CiscoNexusDriver(object):
 
     def delete_vlan(self, nexus_host, vlanid):
         """Delete a VLAN on Nexus Switch given the VLAN ID."""
-        confstr = snipp.CMD_NO_VLAN_CONF_SNIPPET % vlanid
-        confstr = self.create_xml_snippet(confstr)
-        self._edit_config(nexus_host, target='running', config=confstr)
-
+		flag='diavlanflag'
+        disvlanflag = mech.get_switch_flags(nexus_host, flag)
+        if disvlanflag:
+            pass
+        else:
+            confstr = snipp.CMD_NO_VLAN_CONF_SNIPPET % vlanid
+            confstr = self.create_xml_snippet(confstr)
+            self._edit_config(nexus_host, target='running', config=confstr)
+    
     def enable_vlan_on_trunk_int(self, nexus_host, vlanid, intf_type,
                                  interface):
         """Enable a VLAN on a trunk interface."""
@@ -174,12 +180,17 @@ class CiscoNexusDriver(object):
     def disable_vlan_on_trunk_int(self, nexus_host, vlanid, intf_type,
                                   interface):
         """Disable a VLAN on a trunk interface."""
-        confstr = (snipp.CMD_NO_VLAN_INT_SNIPPET %
-                   (intf_type, interface, vlanid, intf_type))
-        confstr = self.create_xml_snippet(confstr)
-        LOG.debug(_("NexusDriver: %s"), confstr)
-        self._edit_config(nexus_host, target='running', config=confstr)
-
+		flag='diavlanflag'
+        disvlanflag = mech.get_switch_flags(nexus_host, flag)
+        if disvlanflag:
+            pass
+        else:
+            confstr = (snipp.CMD_NO_VLAN_INT_SNIPPET %
+                       (intf_type, interface, vlanid, intf_type))
+            confstr = self.create_xml_snippet(confstr)
+            LOG.debug(_("NexusDriver: %s"), confstr)
+            self._edit_config(nexus_host, target='running', config=confstr)
+    
     def create_and_trunk_vlan(self, nexus_host, vlan_id, vlan_name,
                               intf_type, nexus_port):
         """Create VLAN and trunk it on the specified ports."""

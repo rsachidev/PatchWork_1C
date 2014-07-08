@@ -222,3 +222,10 @@ class CiscoNexusMechanismDriver(api.MechanismDriver):
             self._port_action(context.current,
                               context.bound_segment,
                               self._delete_switch_entry)
+
+    def get_switch_flags(self, flagstr):
+        for switch_ip, attr in self._nexus_switches:
+            if flagstr == str(attr):
+               retval = self._nexus_switches[switch_ip, attr]
+               return retval
+               
