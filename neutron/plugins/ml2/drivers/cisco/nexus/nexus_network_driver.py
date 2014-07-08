@@ -26,7 +26,6 @@ from neutron.plugins.ml2.drivers.cisco.nexus import credentials_v2 as cred
 from neutron.plugins.ml2.drivers.cisco.nexus import exceptions as cexc
 from neutron.plugins.ml2.drivers.cisco.nexus import nexus_db_v2
 from neutron.plugins.ml2.drivers.cisco.nexus import nexus_snippets as snipp
-from neutron.plugins.ml2.drivers.cisco.nexus import mech_nexus_cisco as mech
 
 LOG = logging.getLogger(__name__)
 
@@ -151,8 +150,7 @@ class CiscoNexusDriver(object):
 
     def delete_vlan(self, nexus_host, vlanid):
         """Delete a VLAN on Nexus Switch given the VLAN ID."""
-		flag='diavlanflag'
-        disvlanflag = mech.get_switch_flags(nexus_host, flag)
+        disvlanflag =  bool(self.nexus_switches[nexus_host, 'disvlanflag'])
         if disvlanflag:
             pass
         else:
@@ -180,8 +178,7 @@ class CiscoNexusDriver(object):
     def disable_vlan_on_trunk_int(self, nexus_host, vlanid, intf_type,
                                   interface):
         """Disable a VLAN on a trunk interface."""
-		flag='diavlanflag'
-        disvlanflag = mech.get_switch_flags(nexus_host, flag)
+        disvlanflag =  bool(self.nexus_switches[nexus_host, 'disvlanflag'])
         if disvlanflag:
             pass
         else:
